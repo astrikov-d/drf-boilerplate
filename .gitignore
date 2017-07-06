@@ -1,0 +1,28 @@
+# PyCharm
+.idea
+
+# Python
+*.pyc
+
+# Virtual environment
+/venv/
+
+# Static files
+/www/static/
+
+# Node
+node_modules
+
+# Celery
+celerybeat_schedule
+celerybeat.pid
+
+# Data
+www/data
+
+# Tests
+.cache
+.coverage*
+
+# Settings
+.env
