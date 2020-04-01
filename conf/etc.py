@@ -1,20 +1,8 @@
-# coding: utf-8
-import environ
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
-root = environ.Path(__file__) - 2
-env = environ.Env(DEBUG=(bool, False), )
-environ.Env.read_env(root('.env'))
+from .core import env, DEBUG
 
-# URL settings
-APP_URL = env('APP_URL')
-PORT = env('PORT', default=80)
-
-# Sentry
-RAVEN_CONFIG = {
-    'dsn': env('RAVEN_DSN'),
-}
-
-# Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -22,6 +10,16 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 15
 }
+
+if not DEBUG:
+    REST_FRAMEWORK['EXCEPTION_HANDLER'] = 'app.error_handlers.custom_exception_handler'
+
+SENTRY_DSN = env('SENTRY_DSN', default='')
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(),
+        ]
+    )

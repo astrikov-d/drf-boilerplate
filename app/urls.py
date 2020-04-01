@@ -1,11 +1,14 @@
-# coding: utf-8
-from django.conf.urls import include, url
 from django.contrib import admin
-from django.http import HttpResponse
+from django.urls import include, path, reverse_lazy
+from django.views.generic.base import RedirectView
 
-admin.autodiscover()
+from app.error_handlers.views import trigger_error
+
+handler404 = 'app.error_handlers.views.handler404'
+handler500 = 'app.error_handlers.views.handler500'
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^robots.txt$', lambda r: HttpResponse('User-agent: *\nDisallow: /msg', content_type='text/plain')),
+    path('', RedirectView.as_view(url=reverse_lazy('admin:index')), name='home'),
+    path('sentry-debug/', trigger_error),
+    path('admin/', admin.site.urls),
 ]
